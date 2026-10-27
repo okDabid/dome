@@ -1,0 +1,34 @@
+name: Publish Windows release
+on:
+  push:
+    tags:
+      - 'v*'
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Test and build portable executable
+        shell: pwsh
+        run: ./scripts/build.ps1
+      - name: Publish downloadable release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          @'
+          Dome is a native Windows desktop island with music controls, optional LRCLIB lyrics, system volume, supported hardware brightness controls, focus timers, hydration, tasks and file shortcuts.
+
+          Download Dome-windows-x64.zip below, extract it, and run Dome.exe on Windows 10 2004+ or Windows 11 x64. The .NET runtime is included. This portable build is unsigned.
+
+          Core tests and the Windows build run before publication. Windows UI/hardware behavior and actual RAM usage still need desktop testing. Lyrics require player metadata and a matching recording; brightness requires a supported driver or DDC/CI-capable monitor. See README.md and VALIDATION.md for details.
+          '@ | Set-Content release-notes.md
+          gh release create $env:GITHUB_REF_NAME artifacts/Dome-windows-x64.zip artifacts/SHA256SUMS.txt --verify-tag --title "Dome $env:GITHUB_REF_NAME" --notes-file release-notes.md
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub release upload failed' }

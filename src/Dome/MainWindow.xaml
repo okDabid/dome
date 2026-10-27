@@ -1,0 +1,176 @@
+<Window x:Class="Dome.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Dome" Width="310" SizeToContent="Height"
+ WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="NoResize"
+ ShowInTaskbar="False" ShowActivated="False" Topmost="True" UseLayoutRounding="True" KeyDown="Window_KeyDown"
+ MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" AllowDrop="True" Drop="Window_Drop">
+ <Border x:Name="Island" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}"
+  BorderThickness="1" CornerRadius="0,0,26,26" Padding="16,10,16,13">
+  <StackPanel>
+   <Grid>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <Button x:Name="HeaderButton" Click="Header_Click" Padding="0,3" Background="Transparent" HorizontalContentAlignment="Left"
+     ToolTip="Expand Dome · Ctrl+Alt+Space" AutomationProperties.Name="Expand or collapse island">
+     <Grid Width="210">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="29"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Border Background="{DynamicResource Accent}" Width="22" Height="22" CornerRadius="8" HorizontalAlignment="Left">
+       <TextBlock Text="&#xE768;" x:Name="MiniIcon" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="10"
+        Foreground="{DynamicResource AccentInk}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+      </Border>
+      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+       <TextBlock x:Name="MiniTitle" Text="A little space for everything" FontSize="11" TextTrimming="CharacterEllipsis"/>
+      </StackPanel>
+     </Grid>
+    </Button>
+    <TextBlock x:Name="MiniClock" Grid.Column="1" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource Muted}"/>
+    <Button x:Name="CollapseButton" Grid.Column="2" Click="Header_Click" Content="&#xE70E;" Style="{StaticResource IconButton}"
+     Width="28" Height="28" Margin="6,0,0,0" Visibility="Collapsed" ToolTip="Collapse" AutomationProperties.Name="Collapse island"/>
+   </Grid>
+   <StackPanel x:Name="ExpandedContent" Visibility="Collapsed" Margin="0,17,0,0">
+    <Grid Margin="2,0,2,16">
+     <StackPanel>
+      <TextBlock Text="D O M E" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Muted}"/>
+      <TextBlock x:Name="Greeting" Text="Your day, a little lighter." FontSize="21" FontWeight="SemiBold" Margin="0,5,0,0"/>
+     </StackPanel>
+     <Border Background="{DynamicResource Card}" CornerRadius="10" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="8,5">
+      <TextBlock x:Name="BatteryLabel" Text="DESKTOP" FontSize="10" Foreground="{DynamicResource Muted}"/>
+     </Border>
+    </Grid>
+    <UniformGrid Columns="6" Margin="0,0,0,15">
+     <Button x:Name="MusicNav" Tag="Music" Click="Nav_Click" Content="Music" Padding="3,9" Margin="0,0,3,0"/>
+     <Button x:Name="ControlsNav" Tag="Controls" Click="Nav_Click" Content="Controls" Padding="3,9" Margin="0,0,3,0"/>
+     <Button x:Name="FocusNav" Tag="Focus" Click="Nav_Click" Content="Focus" Padding="3,9" Margin="0,0,3,0"/>
+     <Button x:Name="WaterNav" Tag="Water" Click="Nav_Click" Content="Water" Padding="3,9" Margin="0,0,3,0"/>
+     <Button x:Name="ShelfNav" Tag="Shelf" Click="Nav_Click" Content="Shelf" Padding="3,9" Margin="0,0,3,0"/>
+     <Button x:Name="SettingsNav" Tag="Settings" Click="Nav_Click" Content="&#xE713;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Padding="3,9" ToolTip="Settings" AutomationProperties.Name="Settings"/>
+    </UniformGrid>
+    <ScrollViewer x:Name="BodyScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="490">
+     <Grid>
+      <StackPanel x:Name="MusicPanel">
+       <Border Background="{DynamicResource Card}" CornerRadius="19" Padding="17">
+        <StackPanel>
+         <Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition Width="64"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <Border Width="54" Height="54" CornerRadius="13" Background="{DynamicResource Surface}" ClipToBounds="True" HorizontalAlignment="Left">
+           <Grid><TextBlock Text="&#xE8D6;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="23" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Accent}"/>
+            <Image x:Name="Artwork" Stretch="UniformToFill"/></Grid>
+          </Border>
+          <StackPanel Grid.Column="1" VerticalAlignment="Center">
+           <TextBlock x:Name="TrackTitle" Text="Nothing playing. Yet." FontSize="17" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+           <TextBlock x:Name="TrackArtist" Text="Play something in your favorite app." Foreground="{DynamicResource Muted}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+         </Grid>
+         <TextBlock x:Name="PlayerLabel" Text="WINDOWS MEDIA" FontSize="9" Foreground="{DynamicResource Muted}" Margin="0,13,0,3"/>
+         <Slider x:Name="SeekSlider" Maximum="1" ValueChanged="Seek_Changed" PreviewMouseLeftButtonUp="Seek_Released" AutomationProperties.Name="Track position"/>
+         <DockPanel Margin="0,2,0,10"><TextBlock x:Name="ElapsedLabel" Text="0:00" FontSize="10" Foreground="{DynamicResource Muted}"/>
+          <TextBlock x:Name="DurationLabel" Text="0:00" FontSize="10" Foreground="{DynamicResource Muted}" HorizontalAlignment="Right"/></DockPanel>
+         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+          <Button x:Name="PreviousButton" Content="&#xE892;" Tag="previous" Click="Transport_Click" Style="{StaticResource IconButton}" ToolTip="Previous track" AutomationProperties.Name="Previous track"/>
+          <Button x:Name="PlayButton" Content="&#xE768;" Tag="play" Click="Transport_Click" Style="{StaticResource IconButton}" Background="{DynamicResource Accent}" Foreground="{DynamicResource AccentInk}" Width="58" Margin="15,0" ToolTip="Play / pause" AutomationProperties.Name="Play or pause"/>
+          <Button x:Name="NextButton" Content="&#xE893;" Tag="next" Click="Transport_Click" Style="{StaticResource IconButton}" ToolTip="Next track" AutomationProperties.Name="Next track"/>
+         </StackPanel>
+        </StackPanel>
+       </Border>
+       <DockPanel Margin="3,17,3,8">
+        <TextBlock Text="THE WORDS, IN THE MOMENT" FontSize="10" Foreground="{DynamicResource Muted}" VerticalAlignment="Center"/>
+        <Button x:Name="LyricsButton" Content="Enable lyrics" Click="Lyrics_Click" Padding="9,5" HorizontalAlignment="Right" FontSize="10"/>
+       </DockPanel>
+       <Border Background="{DynamicResource Card}" CornerRadius="17" Padding="17">
+        <StackPanel>
+         <TextBlock x:Name="PreviousLyric" Foreground="{DynamicResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,9"/>
+         <Button x:Name="CurrentLyricButton" Click="LyricSeek_Click" Padding="0" Background="Transparent" HorizontalContentAlignment="Left">
+          <TextBlock x:Name="CurrentLyric" Text="Lyrics stay off until you enable them." FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" TextWrapping="Wrap"/>
+         </Button>
+         <TextBlock x:Name="NextLyric" Foreground="{DynamicResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,9,0,0"/>
+         <TextBlock x:Name="LyricsCredit" Text="Optional lookup via LRCLIB. Track title and artist are sent." FontSize="10" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+        </StackPanel>
+       </Border>
+      </StackPanel>
+      <StackPanel x:Name="ControlsPanel" Visibility="Collapsed">
+       <TextBlock Text="Make yourself comfortable." FontSize="18" FontWeight="SemiBold" Margin="2,0,0,14"/>
+       <Border Background="{DynamicResource Card}" CornerRadius="17" Padding="18" Margin="0,0,0,10">
+        <StackPanel><DockPanel><TextBlock Text="Output volume" FontWeight="SemiBold"/><TextBlock x:Name="VolumeLabel" HorizontalAlignment="Right"/></DockPanel>
+         <Grid Margin="0,14,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <Button x:Name="MuteButton" Click="Mute_Click" Content="&#xE767;" Style="{StaticResource IconButton}" ToolTip="Mute / unmute" AutomationProperties.Name="Mute or unmute"/>
+          <Slider x:Name="VolumeSlider" Grid.Column="1" ValueChanged="Volume_Changed" AutomationProperties.Name="System volume"/>
+         </Grid><TextBlock x:Name="AudioLabel" Foreground="{DynamicResource Muted}" FontSize="10" Margin="0,9,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
+       </Border>
+       <Border Background="{DynamicResource Card}" CornerRadius="17" Padding="18">
+        <StackPanel><DockPanel><TextBlock Text="Display brightness" FontWeight="SemiBold"/><TextBlock x:Name="BrightnessLabel" HorizontalAlignment="Right"/></DockPanel>
+         <Slider x:Name="BrightnessSlider" ValueChanged="Brightness_Changed" Margin="0,18,0,10" AutomationProperties.Name="Display brightness"/>
+         <TextBlock x:Name="BrightnessHint" Text="Checking display…" Foreground="{DynamicResource Muted}" FontSize="11" TextWrapping="Wrap"/>
+        </StackPanel>
+       </Border>
+       <Button Content="Open Windows display settings ↗" Click="DisplaySettings_Click" Margin="0,14,0,0"/>
+      </StackPanel>
+      <StackPanel x:Name="FocusPanel" Visibility="Collapsed">
+       <Border Background="{DynamicResource Card}" CornerRadius="19" Padding="20">
+        <StackPanel>
+         <TextBlock Text="ONE THING AT A TIME" FontSize="10" Foreground="{DynamicResource Muted}" HorizontalAlignment="Center"/>
+         <TextBlock x:Name="FocusTime" Text="25:00" FontSize="64" FontWeight="Light" HorizontalAlignment="Center" Margin="0,13"/>
+         <ProgressBar x:Name="FocusProgress" Maximum="1" Value="0" Height="3" Foreground="{DynamicResource Accent}" Background="{DynamicResource Surface}" BorderThickness="0" Margin="0,0,0,20"/>
+         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+          <Button Content="15 min" Tag="15" Click="FocusPreset_Click" Margin="0,0,6,0"/><Button Content="25 min" Tag="25" Click="FocusPreset_Click" Margin="0,0,6,0"/><Button Content="50 min" Tag="50" Click="FocusPreset_Click"/>
+         </StackPanel>
+         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,0">
+          <Button x:Name="FocusStart" Content="Start focus" Click="FocusStart_Click" Background="{DynamicResource Accent}" Foreground="{DynamicResource AccentInk}" Margin="0,0,8,0"/><Button Content="Reset" Click="FocusReset_Click"/>
+         </StackPanel>
+        </StackPanel>
+       </Border>
+       <TextBlock Text="A little less on your mind" FontSize="15" Margin="3,18,0,10"/>
+       <DockPanel><Button DockPanel.Dock="Right" Content="Add" Click="AddTask_Click" Margin="8,0,0,0"/><TextBox x:Name="TaskInput" MaxLength="180" KeyDown="TaskInput_KeyDown" ToolTip="Write a task, then press Enter" AutomationProperties.Name="New task"/></DockPanel>
+       <StackPanel x:Name="TaskList" Margin="0,10,0,0"/>
+      </StackPanel>
+      <StackPanel x:Name="WaterPanel" Visibility="Collapsed">
+       <Border Background="{DynamicResource Card}" CornerRadius="19" Padding="22">
+        <StackPanel>
+         <TextBlock Text="A SMALL SIP. A FRESH START." FontSize="10" Foreground="{DynamicResource Muted}" HorizontalAlignment="Center"/>
+         <TextBlock Text="&#xE9CE;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="44" Foreground="{DynamicResource Accent}" HorizontalAlignment="Center" Margin="0,24,0,8"/>
+         <TextBlock x:Name="WaterAmount" Text="0 / 2000 ml" FontSize="28" HorizontalAlignment="Center" Margin="0,8,0,16"/>
+         <ProgressBar x:Name="WaterProgress" Maximum="2000" Height="5" Foreground="{DynamicResource Accent}" Background="{DynamicResource Surface}" BorderThickness="0"/>
+         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,22,0,0">
+          <Button Content="+ 250 ml" Tag="250" Click="WaterAdd_Click" Background="{DynamicResource Accent}" Foreground="{DynamicResource AccentInk}" Margin="0,0,8,0"/>
+          <Button Content="+ 500 ml" Tag="500" Click="WaterAdd_Click"/>
+         </StackPanel>
+         <Button Content="Undo last drink" Click="WaterUndo_Click" Margin="0,12,0,0"/>
+         <CheckBox x:Name="WaterReminders" Content="Remind me every 60 minutes, 08:00–22:00" Checked="Settings_Changed" Unchecked="Settings_Changed" Margin="0,20,0,0"/>
+         <TextBlock Text="A personal tracker, not medical guidance. Resets daily." Foreground="{DynamicResource Muted}" FontSize="10" TextWrapping="Wrap" Margin="0,12,0,0"/>
+        </StackPanel>
+       </Border>
+      </StackPanel>
+      <StackPanel x:Name="ShelfPanel" Visibility="Collapsed">
+       <Border Background="{DynamicResource Card}" CornerRadius="19" Padding="24" BorderBrush="{DynamicResource Line}" BorderThickness="1">
+        <StackPanel><TextBlock Text="&#xE8B7;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="30" Foreground="{DynamicResource Accent}" HorizontalAlignment="Center"/>
+         <TextBlock Text="Drop it here. Find it later." FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,14,0,8"/>
+         <TextBlock Text="Drop files onto the island to keep shortcuts. Originals stay where they are." FontSize="12" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" TextAlignment="Center"/>
+         <Button Content="Choose files" Click="ChooseFiles_Click" Margin="0,17,0,0"/>
+        </StackPanel>
+       </Border>
+       <StackPanel x:Name="FileList" Margin="0,12,0,0"/>
+       <TextBlock Text="Open a file by name. × removes only its shortcut." FontSize="10" Foreground="{DynamicResource Muted}" Margin="3,8,0,0"/>
+      </StackPanel>
+      <StackPanel x:Name="SettingsPanel" Visibility="Collapsed">
+       <TextBlock Text="Make room for your own rhythm." FontSize="18" FontWeight="SemiBold" Margin="0,0,0,15"/>
+       <TextBlock Text="APPEARANCE" FontSize="10" Foreground="{DynamicResource Muted}" Margin="0,0,0,8"/>
+       <StackPanel Orientation="Horizontal"><Button Content="System" Tag="System" Click="Theme_Click" Margin="0,0,6,0"/><Button Content="Light" Tag="Light" Click="Theme_Click" Margin="0,0,6,0"/><Button Content="Dark" Tag="Dark" Click="Theme_Click"/></StackPanel>
+       <TextBlock x:Name="ThemeLabel" Text="Following Windows appearance" FontSize="11" Foreground="{DynamicResource Muted}" Margin="0,9,0,15"/>
+       <CheckBox x:Name="HoverExpand" Content="Expand on hover" Checked="Settings_Changed" Unchecked="Settings_Changed"/>
+       <CheckBox x:Name="AutoStart" Content="Start when I sign in to Windows" Checked="AutoStart_Changed" Unchecked="AutoStart_Changed"/>
+       <CheckBox x:Name="LyricsSetting" Content="Look up lyrics online with LRCLIB" Checked="LyricsSetting_Changed" Unchecked="LyricsSetting_Changed"/>
+       <TextBlock Text="When enabled, track title, artist, album and duration are sent to lrclib.net over HTTPS. No account or API key needed." FontSize="11" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,0,0,15"/>
+       <TextBlock Text="Ctrl + Alt + Space" FontWeight="SemiBold"/><TextBlock Text="Expand / collapse · Escape to tuck away · Right-click for tray menu" FontSize="11" Foreground="{DynamicResource Muted}" TextWrapping="Wrap" Margin="0,5,0,16"/>
+       <Button Content="Move to next display" Click="NextDisplay_Click" Margin="0,0,0,10"/>
+       <TextBlock x:Name="MemoryLabel" FontSize="11" Foreground="{DynamicResource Muted}"/>
+       <TextBlock Text="DOME 1.0 · Built for a quieter desktop" FontSize="10" Foreground="{DynamicResource Muted}" Margin="0,15,0,12"/>
+       <Button Content="Quit Dome" Click="Quit_Click"/>
+      </StackPanel>
+     </Grid>
+    </ScrollViewer>
+    <Grid Margin="2,14,2,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+     <TextBlock x:Name="StatusLabel" Text="A little space. A lot less friction." FontSize="10" Foreground="{DynamicResource Muted}" TextTrimming="CharacterEllipsis"/>
+     <TextBlock Text="●  LOCAL FIRST" Grid.Column="1" FontSize="9" Foreground="{DynamicResource Accent}" Margin="8,0,0,0"/>
+    </Grid>
+   </StackPanel>
+  </StackPanel>
+ </Border>
+</Window>
